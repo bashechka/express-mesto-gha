@@ -24,3 +24,7 @@ app.use((req, res, next) => {
 
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
+
+app.all('/*', (req, res) => {
+  res.status(404).send('Страница не существует');
+});

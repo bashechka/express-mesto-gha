@@ -30,7 +30,7 @@ module.exports.deleteCard = (req, res) => {
       }
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'ValidationError' || err.name === 'CaseError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
       } else {
         res.status(500).send({ message: 'Произошла ошибка' });
@@ -50,7 +50,7 @@ module.exports.likeCard = (req, res) => {
       res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
     }
   }).catch((err) => {
-    if (err.name === 'ValidationError') {
+    if (err.name === 'ValidationError' || err.name === 'CaseError') {
       res.status(400).send({ message: 'Переданы некорректные данные' });
     } else {
       res.status(500).send({ message: 'Произошла ошибка' });
@@ -70,7 +70,7 @@ module.exports.dislikeCard = (req, res) => {
       res.status(404).send({ message: 'Карточка с указанным _id не найдена' });
     }
   }).catch((err) => {
-    if (err.name === 'ValidationError') {
+    if (err.name === 'ValidationError' || err.name === 'CaseError') {
       res.status(400).send({ message: 'Переданы некорректные данные' });
     } else {
       res.status(500).send({ message: 'Произошла ошибка' });

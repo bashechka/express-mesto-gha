@@ -28,7 +28,13 @@ module.exports.getUserById = (req, res) => {
         res.status(404).send({ message: 'Запрашиваемый пользователь не найден' });
       }
     })
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
+      }
+    });
 };
 
 module.exports.updateUser = (req, res) => {
