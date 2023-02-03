@@ -1,11 +1,17 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
+const constants = require('http2');
+const { errors } = require('celebrate');
 const rateLimit = require('express-rate-limit');
+const auth = require('./middlewares/auth');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+const NotFoundError = require('./errors/not-found-err');
 
 const app = express();
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
+const { login, createUser } = require('./controllers/users');
 
 const { PORT = 3000 } = process.env;
 // app.use(express.static(path.join(__dirname, 'public')));
@@ -16,20 +22,6 @@ app.listen(PORT, () => {
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use(express.json());
-app.use((req, res, next) => {
-  req.user = {
-    _id: '63c22e07d3611cbaf5aa174c', // вставьте сюда _id созданного в предыдущем пункте пользователя
-  };
-
-  next();
-});
-
-app.use('/users', userRouter);
-app.use('/cards', cardRouter);
-
-app.all('/*', (req, res) => {
-  res.status(404).send({ message: 'Страница не существует' });
-});
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -40,3 +32,31 @@ const limiter = rateLimit({
 
 app.use(limiter);
 app.use(helmet());
+
+app.use(requestLogger); // подключаем логгер запросов
+
+app.post('/signin', login);
+app.post('/signup', createUser);
+
+// авторизация
+app.use(auth);
+
+app.use('/users', userRouter);
+app.use('/cards', cardRouter);
+
+app.all('/*', (req, res, next) => {
+  next(new NotFoundError('Страница не существует'));
+});
+
+// обработчики ошибок
+app.use(errors()); // обработчик ошибок celebrate
+
+// наш централизованный обработчик
+app.use((err, req, res, next) => {
+  const status = err.statusCode || constants.HTTP_STATUS_INTERNAL_SERVER_ERROR;
+  const message = err.message || 'Неизвестная ошибка';
+  res.status(status).send({ message });
+  next();
+});
+
+app.use(errorLogger); // подключаем логгер ошибок
