@@ -14,10 +14,6 @@ const cardRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 
 const { PORT = 3000 } = process.env;
-// app.use(express.static(path.join(__dirname, 'public')));
-app.listen(PORT, () => {
-  console.log(`app listening on port ${PORT}`);
-});
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
@@ -60,3 +56,8 @@ app.use((err, req, res, next) => {
 });
 
 app.use(errorLogger); // подключаем логгер ошибок
+
+// app.use(express.static(path.join(__dirname, 'public')));
+app.listen(PORT, () => {
+  console.log(`app listening on port ${PORT}`);
+});
