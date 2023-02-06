@@ -45,13 +45,16 @@ const userSchema = new mongoose.Schema({
     },
     select: false,
   },
-});
+}, { versionKey: false });
 
 userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email })
     .select('+password')
     .then((user) => {
       if (!user) {
+        if (!validator.isEmail(email)) {
+          return Promise.reject(new Error('Ошибка валидации'));
+        }
         return Promise.reject(new Error('Неправильные почта или пароль'));
       }
 

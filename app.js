@@ -12,6 +12,7 @@ const app = express();
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
+const { signUpValidator, signInValidator } = require('./validators/validators.js');
 
 const { PORT = 3000 } = process.env;
 
@@ -31,8 +32,8 @@ app.use(helmet());
 
 app.use(requestLogger); // подключаем логгер запросов
 
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', signInValidator, login);
+app.post('/signup', signUpValidator, createUser);
 
 // авторизация
 app.use(auth);
