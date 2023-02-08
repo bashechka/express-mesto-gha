@@ -5,10 +5,17 @@ const BadRequestError = require('../errors/bad-request-err');
 const UnauthorizedError = require('../errors/unauthorized-err');
 const InternalServerError = require('../errors/internal-server-err');
 const NotFoundError = require('../errors/not-found-err');
+const ConflictError = require('../errors/conflict-err');
 
 module.exports.createUser = (req, res, next) => {
-  bcrypt
-    .hash(req.body.password, 10)
+  User.findOne({ email: req.body.email })
+    .then((user) => {
+      if (user) {
+        return Promise.reject(new ConflictError('Пользователь с таким email уже существует'));
+      }
+      return user;
+    })
+    .then(() => bcrypt.hash(req.body.password, 10))
     .then((hash) => User.create({
       name: req.body.name,
       about: req.body.about,
@@ -16,14 +23,16 @@ module.exports.createUser = (req, res, next) => {
       email: req.body.email,
       password: hash, // записываем хеш в базу
     }))
-    .then((d) => {
-      const user = d.toObject();
+    .then((data) => {
+      const user = data.toObject();
       delete user.password;
       res.send(user);
     })
     .catch((err) => {
-      if ((err.name === 'ValidationError')) {
+      if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные'));
+      } else if (err.statusCode === 409) {
+        next(err);
       } else {
         next(new InternalServerError('Произошла ошибка'));
       }
