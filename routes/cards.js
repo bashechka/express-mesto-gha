@@ -3,7 +3,7 @@ const {
   getCard, createCard, deleteCard, likeCard, dislikeCard,
 } = require('../controllers/cards');
 const {
-  cardValidator, cardIdValidator
+  cardValidator, cardIdValidator,
 } = require('../validators/validators.js');
 
 router.get('/', getCard);

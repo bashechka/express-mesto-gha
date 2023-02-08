@@ -1,8 +1,8 @@
 const Card = require('../models/card');
 const BadRequestError = require('../errors/bad-request-err');
-const UnauthorizedError = require('../errors/unauthorized-err');
 const InternalServerError = require('../errors/internal-server-err');
 const NotFoundError = require('../errors/not-found-err');
+const ForbiddenError = require('../errors/forbidden-err');
 
 module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
@@ -31,7 +31,7 @@ module.exports.deleteCard = (req, res, next) => {
       if (!card) {
         next(new NotFoundError('Карточка с указанным _id не найдена'));
       } else if (card.owner !== req.user._id) {
-        next(new UnauthorizedError('Ошибка авторизации'));
+        next(new ForbiddenError('Доступ запрещен'));
       } else {
         card.remove();
         res.send({ data: card });

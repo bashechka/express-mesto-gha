@@ -3,7 +3,7 @@ const {
   getUsers, getUserById, updateUser, getCurrentUser, updateAvatar,
 } = require('../controllers/users');
 const {
-  userGetValidator, userUpdateValidator, userUpdateAvatarValidator
+  userGetValidator, userUpdateValidator, userUpdateAvatarValidator,
 } = require('../validators/validators.js');
 
 router.get('/', getUsers);
