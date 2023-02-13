@@ -12,7 +12,7 @@ const app = express();
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
-const { userValidator, signInValidator } = require('./validators/validators.js');
+const { userValidator, signInValidator } = require('./validators/validators');
 
 const { PORT = 3000 } = process.env;
 

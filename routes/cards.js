@@ -4,7 +4,7 @@ const {
 } = require('../controllers/cards');
 const {
   cardValidator, cardIdValidator,
-} = require('../validators/validators.js');
+} = require('../validators/validators');
 
 router.get('/', getCard);
 router.post('/', cardValidator, createCard);

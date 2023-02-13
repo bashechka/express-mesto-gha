@@ -4,7 +4,7 @@ const {
 } = require('../controllers/users');
 const {
   userGetValidator, userUpdateValidator, userUpdateAvatarValidator,
-} = require('../validators/validators.js');
+} = require('../validators/validators');
 
 router.get('/', getUsers);
 router.get('/me', getCurrentUser);
