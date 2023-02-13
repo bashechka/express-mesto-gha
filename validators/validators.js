@@ -33,14 +33,14 @@ module.exports.userValidator = celebrate({
 
 module.exports.userUpdateValidator = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
+    name: Joi.string().min(2).max(30).required(),
+    about: Joi.string().min(2).max(30).required(),
   }),
 });
 
 module.exports.userUpdateAvatarValidator = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().pattern(validURL),
+    avatar: Joi.string().pattern(validURL).required(),
   }),
 });
 

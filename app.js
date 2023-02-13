@@ -45,6 +45,7 @@ app.use('/cards', cardRouter);
 app.all('/*', (req, res, next) => {
   next(new NotFoundError('Страница не существует'));
 });
+app.use(errorLogger); // подключаем логгер ошибок
 
 // обработчики ошибок
 app.use(errors()); // обработчик ошибок celebrate
@@ -52,12 +53,10 @@ app.use(errors()); // обработчик ошибок celebrate
 // наш централизованный обработчик
 app.use((err, req, res, next) => {
   const status = err.statusCode || constants.HTTP_STATUS_INTERNAL_SERVER_ERROR;
-  const message = err.message || 'Неизвестная ошибка';
+  const message = status === constants.HTTP_STATUS_INTERNAL_SERVER_ERROR ? 'Неизвестная ошибка' : err.message;
   res.status(status).send({ message });
   next();
 });
-
-app.use(errorLogger); // подключаем логгер ошибок
 
 // app.use(express.static(path.join(__dirname, 'public')));
 app.listen(PORT, () => {
